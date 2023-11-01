@@ -1,3 +1,7 @@
 {
-  "start": "node bot.js"
+  "scripts": [
+    {
+      "start": "node bot.js"
+    }
+  ]
 }
