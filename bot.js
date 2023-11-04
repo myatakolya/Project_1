@@ -1,17 +1,11 @@
 import { getMainMenu } from "./keyboards.js"
-
-require('dotenv').config();
-
-const { Telegraf } = require('telegraf');
-const { message } = require('telegraf/filters')
-const express = require('express');
+import { Telegraf } from 'telegraf'
+import { message } from 'telegraf/filters'
+import express from 'express'
+import 'dotenv/config'
 
 const app = express();
 const bot = new Telegraf(process.env.BOTKEY);
-
-// app.get('/', (req, res) => {
-//   res.send("Hello World")
-// })
 
 bot.start(ctx => {
   return ctx.reply(`Привет ${ctx.update.message.from.first_name}! Меня зовут Расписалово, я предназначен для работы с учебным расписанием (удивительно, не так ли?!)`);
