@@ -1,13 +1,16 @@
 const { Telegraf } = require('telegraf');
-const express = require('express');
 const { message } = require('telegraf/filters')
+const express = require('express');
 
+// express
 const app = express();
-const PORT = 3000;
+const PORT = 3000; 
+
+// telegraf
 const bot = new Telegraf("6891459485:AAHuNv-37ZfPC9TDJFxZ_LHPLUCKxcm9yDE");
 
 app.get('/', (req, res) => {
-  res.send("Hello")
+  res.send("Hello World")
 })
 
 app.listen(PORT, () => console.log(`My server is running on port ${PORT}`))
