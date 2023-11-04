@@ -1,10 +1,27 @@
 {
   "scripts": {
-    "start": "node bot.js"
+    "dev": "nodemon bot.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
     "express": "^4.18.2",
     "telegraf": "^4.15.0"
-  }
+  },
+  "name": "project_1",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myatakolya/Project_1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/myatakolya/Project_1/issues"
+  },
+  "homepage": "https://github.com/myatakolya/Project_1#readme",
+  "description": "",
+  "type": "module"
 }
