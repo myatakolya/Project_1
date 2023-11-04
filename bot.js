@@ -1,6 +1,6 @@
-const Telegraf = require('telegraf');
+const { Telegraf } = require('telegraf');
 const express = require('express');
-const message = require('telegraf/filters')
+const { message } = require('telegraf/filters')
 
 const app = express();
 const PORT = 3000;
