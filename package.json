@@ -89,7 +89,8 @@
     "whatwg-url": "^5.0.0"
   },
   "scripts": {
-    "bot": "nodemon bot.js"
+    "start": "node bot.js",
+    "dev": "nodemon bot.js"
   },
   "repository": {
     "type": "git",
@@ -101,5 +102,6 @@
   "bugs": {
     "url": "https://github.com/myatakolya/Project_1/issues"
   },
-  "homepage": "https://github.com/myatakolya/Project_1#readme"
+  "homepage": "https://github.com/myatakolya/Project_1#readme",
+  "type": "module"
 }
