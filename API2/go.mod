@@ -1,4 +1,4 @@
-module API
+module API2
 
 go 1.21
 
