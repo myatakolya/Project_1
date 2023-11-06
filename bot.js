@@ -8,11 +8,13 @@ bot.on('text', msg => {
 });
 
 bot.on('text', msg => {
-  if (msg.text == "home") {
-    bot.sendMessage(msg.chat.id, "Motherfucker")
-  }
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, 'some text', {
+    reply_markup: {
+      keyboard: [
+        ['1' ,'2'],
+        ['3']
+      ]
+    }
+  })
 });
-
-bot.onText(/\/home/, msg => {
-  bot.sendMessage(msg.chat.id, `Hi ${msg.from.first_name}`)
-})
