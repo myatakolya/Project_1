@@ -188,11 +188,11 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/user", connection.CreateUserEndpoint).Methods("POST")
-	router.HandleFunc("/user", connection.CreateTeacherEndpoint).Methods("POST")
+	router.HandleFunc("/usert", connection.CreateTeacherEndpoint).Methods("POST")
 	router.HandleFunc("/users", connection.GetUsersEndpoint).Methods("GET")
 	router.HandleFunc("/shedule", connection.GetSheduleEndpoint).Methods("GET")
 	router.HandleFunc("/user/{id}", connection.UpdateUserEndpoint).Methods("PUT")
 	router.HandleFunc("/shedule/{id}", connection.UpdateSheduleEndpoint).Methods("PUT")
 	router.HandleFunc("/user/{id}", connection.DeleteUserEndpoint).Methods("DELETE")
-	http.ListenAndServe("localhost:8080", router)
+	http.ListenAndServe("localhost:8000", router)
 }
