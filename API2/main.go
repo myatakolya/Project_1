@@ -124,6 +124,60 @@ func (connection Connection) GetSheduleEndpoint(response http.ResponseWriter, re
 	json.NewEncoder(response).Encode(shed)
 }
 
+func (connection Connection) GetAdminsEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	var admins []User
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := connection.Users.Find(ctx, bson.M{"roles": bson.A{"Админ", "Студент"}})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	if err = cursor.All(ctx, &admins); err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(admins)
+}
+
+func (connection Connection) GetStudentsEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	var admins []User
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := connection.Users.Find(ctx, bson.M{"roles": bson.A{"Студент"}})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	if err = cursor.All(ctx, &admins); err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(admins)
+}
+
+func (connection Connection) GetTeachersEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	var teachers []Teacher
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := connection.Users.Find(ctx, bson.M{"roles": bson.A{"Учитель"}})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	if err = cursor.All(ctx, &teachers); err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(teachers)
+}
+
 func (connection Connection) UpdateUserEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	params := mux.Vars(request)
@@ -188,11 +242,14 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/user", connection.CreateUserEndpoint).Methods("POST")
-	router.HandleFunc("/user", connection.CreateTeacherEndpoint).Methods("POST")
+	router.HandleFunc("/usert", connection.CreateTeacherEndpoint).Methods("POST")
 	router.HandleFunc("/users", connection.GetUsersEndpoint).Methods("GET")
+	router.HandleFunc("/teachers", connection.GetTeachersEndpoint).Methods("GET")
+	router.HandleFunc("/admins", connection.GetAdminsEndpoint).Methods("GET")
+	router.HandleFunc("/students", connection.GetStudentsEndpoint).Methods("GET")
 	router.HandleFunc("/shedule", connection.GetSheduleEndpoint).Methods("GET")
 	router.HandleFunc("/user/{id}", connection.UpdateUserEndpoint).Methods("PUT")
 	router.HandleFunc("/shedule/{id}", connection.UpdateSheduleEndpoint).Methods("PUT")
 	router.HandleFunc("/user/{id}", connection.DeleteUserEndpoint).Methods("DELETE")
-	http.ListenAndServe("localhost:8080", router)
+	http.ListenAndServe("localhost:8000", router)
 }
