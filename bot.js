@@ -13,7 +13,6 @@ const db_roles = process.env.DB_ROLES
 bot.use(session())
 
 const question = new Scenes.BaseScene("question");
-
 question.enter(ctx => ctx.reply('Enter name'));
 question.on(message('text'), async ctx => {
   const userName = ctx.message.text;
