@@ -1,32 +1,38 @@
-import TelegramBot from 'node-telegram-bot-api'
-// import mongoose from 'mongoose'
+import { Scenes, session, Telegraf } from 'telegraf'
+import { message } from 'telegraf/filters'
 import 'dotenv/config'
-import debug from './helpers.js'
+import axios from 'axios'
+// import debug from './helpers.js'
 
-// mongoose.connect(process.env.DB_URL, {
-//   useMongoClient: true
-// }).then( () => {
-//   console.log("MongoDB connected")
-// }).catch( (err) => {
-//   console.log(err)
-// })
+const bot = new Telegraf(process.env.TG_API_TOKEN);
+const db = process.env.DB_URL
+const db_users = process.env.DB_USERS
+const db_schedule = process.env.DB_SCHEDULE
+const db_roles = process.env.DB_ROLES
 
-const bot = new TelegramBot(process.env.TG_API_TOKEN, { polling: true });
+bot.use(session())
 
-bot.on('message', msg => {
-  console.log(msg)
+const question = new Scenes.BaseScene("question");
 
-});
-bot.on('message', msg => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'some text', {
-    reply_markup: {
-      inline_keyboard: [
-        [{
-          text: 'button',
-          callback_data: '1'
-        }]
-      ]
-    }
-  })
-});
+question.enter(ctx => ctx.reply('Enter name'));
+question.on(message('text'), async ctx => {
+  const userName = ctx.message.text;
+  await ctx.reply(`Your name is ${userName}`);
+  return ctx.scene.leave();
+})
+
+bot.start(ctx => {
+  console.log(ctx)
+})
+bot.launch()
+
+
+// async function getAllUsers() {
+//   try {
+//     await axios.get(process.env.DB_URL + process.env.DB_USERS + `?_limit=2`).then(response => {
+//       console.log(response)
+//     })
+//   } catch (err) {
+//     console.log(err)
+//   }
+// }
