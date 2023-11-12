@@ -1,9 +1,9 @@
-import {Scenes} from 'telegraf'
+import Scenes from 'telegraf'
 
 export class ScenesGenerator {
 
   getUserNameScene() {
-    const name = new Scenes('name');
+    const name = new Scenes.WizardScene('name');
     name.enter(async ctx => {
       await ctx.reply('Добро пожаловать в сцену, введите ваше имя')
     })
@@ -21,7 +21,7 @@ export class ScenesGenerator {
   }
 
   getUserAgeScene() {
-    const age = new Scenes('age');
+    const age = new Scenes.WizardScene('age');
     age.enter(async ctx => {
       await ctx.reply('Добро пожаловать в сцену, введите ваш возраст')
     })
