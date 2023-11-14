@@ -11,6 +11,8 @@ const db_schedule = process.env.DB_SCHEDULE
 const db_roles = process.env.DB_ROLES
 const date = new Date();
 
+axios.defaults.baseURL = `${db}`
+
 let userFirstName;
 let userLastName;
 let userGitID;
@@ -52,7 +54,29 @@ bot.start(async ctx => {
   await ctx.reply('Добро пожаловать, меня зовут Расписалово. Я - бот, который управляет расписанием. Перед началом работы необходимо аутентифицироваться')
   await ctx.scene.enter('userName')
 })
+bot.command('toadmin' , ctx => {
+  ctx.reply('Данная функция пока недоступна')
+})
+bot.hears('Расписание на сегодня')
+
+bot.hears('Получить пользователя', async ctx => {
+  // const user = await axios.get('/users');
+  // console.log(user.data)
+  console.log(getUserById('653ebb213c4c46bb0101cd7a'))
+})
 bot.launch()
+
+// async function getUserById(userId) {
+  // try {
+  //   const data= await axios.get(`/users`, {
+  //     data: 
+  //   });
+//     return data
+//   } catch( err ) {
+//     console.log(err)
+//   }
+  
+// }
 
 
 // async function getAllUsers() {
