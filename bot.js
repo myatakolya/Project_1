@@ -62,21 +62,27 @@ bot.hears('Расписание на сегодня')
 bot.hears('Получить пользователя', async ctx => {
   // const user = await axios.get('/users');
   // console.log(user.data)
-  console.log(getUserById('653ebb213c4c46bb0101cd7a'))
+  console.log(getUserById('653eb38c3c4c46bb0101cd56'))
 })
 bot.launch()
 
-// async function getUserById(userId) {
-  // try {
-  //   const data= await axios.get(`/users`, {
-  //     data: 
-  //   });
-//     return data
-//   } catch( err ) {
-//     console.log(err)
-//   }
-  
-// }
+async function getUserById(userId) {
+  try {
+    await axios.get(`/users`, {
+      data: [
+        {
+          ID: userId
+        }
+      ]
+    }).then(response => {
+      console.log(response)
+    }).catch(err => {
+      console.log(err)
+    });
+  } catch( err ) {
+    console.log(err)
+  }
+}
 
 
 // async function getAllUsers() {
