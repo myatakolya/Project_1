@@ -102,5 +102,8 @@
     "url": "https://github.com/myatakolya/Project_1/issues"
   },
   "homepage": "https://github.com/myatakolya/Project_1#readme",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
 }
