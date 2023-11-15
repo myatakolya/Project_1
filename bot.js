@@ -2,16 +2,14 @@ import { Telegraf, Scenes, session, Composer } from 'telegraf'
 import { message } from 'telegraf/filters'
 import 'dotenv/config'
 import axios from 'axios'
+import methods from 'methods';
 // import debug from './helpers.js'
 
 const bot = new Telegraf(process.env.TG_API_TOKEN);
-const db = process.env.DB_URL
-const db_users = process.env.DB_USERS
-const db_schedule = process.env.DB_SCHEDULE
-const db_roles = process.env.DB_ROLES
-const date = new Date();
+const pathToUsers = '/users'
+const pathToSchedule = '/shedule'
 
-axios.defaults.baseURL = `${db}`
+axios.defaults.baseURL = `${process.env.DB_URL}`
 
 let userFirstName;
 let userLastName;
@@ -39,6 +37,7 @@ const lastName = new Composer();
 lastName.on('text', async ctx => {
   if (ctx.message.text) {
     userLastName = ctx.message.text
+    await ctx.reply(`Приветствую, ${userFirstName} ${userLastName}`)
     await ctx.scene.leave()
   } else {
     await ctx.reenter()
@@ -57,25 +56,24 @@ bot.start(async ctx => {
 bot.command('toadmin' , ctx => {
   ctx.reply('Данная функция пока недоступна')
 })
-bot.hears('Расписание на сегодня')
+// bot.hears('Расписание на сегодня', async ctx => {
+//   await getSchedule(ctx)
+// })
 
-bot.hears('Получить пользователя', async ctx => {
-  // const user = await axios.get('/users');
-  // console.log(user.data)
-  console.log(getUserById('653eb38c3c4c46bb0101cd56'))
+bot.command('showusers', async ctx => {
+  console.log(getUserById('653ebb213c4c46bb0101cd7a'))
 })
 bot.launch()
 
 async function getUserById(userId) {
   try {
-    await axios.get(`/users`, {
-      data: [
-        {
-          ID: userId
-        }
-      ]
+    await axios({
+      method: 'get',
+      url: `${pathToUsers}`
     }).then(response => {
-      console.log(response)
+      console.log(response.data.find( item => {
+        return item.ID === `${userId}`;
+      }))
     }).catch(err => {
       console.log(err)
     });
@@ -84,13 +82,18 @@ async function getUserById(userId) {
   }
 }
 
-
-// async function getAllUsers() {
-//   try {
-//     await axios.get(process.env.DB_URL + process.env.DB_USERS + `?_limit=2`).then(response => {
-//       console.log(response)
+// async function getSchedule(ctx) {
+//   try{
+//     await axios.get(
+//       pathToSchedule
+//     ).then(
+//       response => {
+//         ctx.reply(JSON.stringify(response.data, "", 2))
+//       }
+//     ).catch(err => {
+//         console.log(err)
 //     })
-//   } catch (err) {
+//   }catch(err){
 //     console.log(err)
 //   }
 // }
