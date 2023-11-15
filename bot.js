@@ -86,9 +86,10 @@ async function getUserById(userId) {
 //   try{
 //     await axios.get(
 //       pathToSchedule
-//     ).then(
-//       response => {
-//         ctx.reply(JSON.stringify(response.data, "", 2))
+//     ).then( response => {
+//         ctx.reply(response.data.find(item => {
+//           JSON.stringify(item.Lessons, " ", 2)
+//         }))
 //       }
 //     ).catch(err => {
 //         console.log(err)
