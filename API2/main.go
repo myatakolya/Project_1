@@ -20,30 +20,83 @@ type Role struct {
 }
 
 type User struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty"`
-	id         int                `bson:"id"`
-	Name       string             `bson:"name"`
-	Secondname string             `bson:"secondname"`
-	Username   string             `bson:"username"`
-	Groupe     int                `bson:"groupe,omitempty"`
-	Roles      bson.A             `bson:"roles"`
+	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	Tg_id    string             `bson:"tg_id"`
+	Name     string             `bson:"name"`
+	Surname  string             `bson:"surname"`
+	Username string             `bson:"username"`
+	Groupe   int                `bson:"groupe,omitempty"`
+	Role     string             `bson:"role"`
 }
 
 type Teacher struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty"`
-	id         int                `bson:"id"`
-	Name       string             `bson:"name"`
-	Secondname string             `bson:"secondname"`
-	Username   string             `bson:"username"`
-	Roles      bson.A             `bson:"roles"`
+	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	Tg_id    string             `bson:"tg_id"`
+	Name     string             `bson:"name"`
+	Surname  string             `bson:"surname"`
+	Username string             `bson:"username"`
+	Role     string             `bson:"role"`
+}
+
+type Mess struct {
+	Message1 string `bson:"message1"`
+}
+
+type Lesson struct {
+	Subject string `bson:"subject,omitempty"`
+	Teacher string `bson:"teacher,omitempty"`
+	Room    string `bson:"room,omitempty"`
+	Type    string `bson:"type,omitempty"`
+	Time    string `bson:"time,omitempty"`
+}
+
+type Lessons struct {
+	Lesson1  Lesson `bson:"lesson1,omitempty"`
+	Message1 string `bson:"message1"`
+	Lesson2  Lesson `bson:"lesson2,omitempty"`
+	Message2 string `bson:"message2"`
+	Lesson3  Lesson `bson:"lesson3,omitempty"`
+	Message3 string `bson:"message3"`
+	Lesson4  Lesson `bson:"lesson4,omitempty"`
+	Message4 string `bson:"message4"`
+}
+
+type LessonsT struct {
+	Lesson1  Lesson `bson:"lesson1,omitempty"`
+	Message1 string `bson:"message1"`
+	Lesson2  Lesson `bson:"lesson2,omitempty"`
+	Message2 string `bson:"message2"`
+	Lesson3  Lesson `bson:"lesson3,omitempty"`
+	Message3 string `bson:"message3"`
+}
+
+type LessonsF struct {
+	Lesson1  Lesson `bson:"lesson1,omitempty"`
+	Message1 string `bson:"message1"`
+}
+
+type Monday struct {
+	Day     string  `bson:"day"`
+	Group   int     `bson:"group"`
+	Lessons Lessons `bson:"lessons"`
+}
+
+type Tuesday struct {
+	Day     string   `bson:"day"`
+	Group   int      `bson:"group"`
+	Lessons LessonsT `bson:"lessons"`
+}
+
+type Friday struct {
+	Day     string   `bson:"day"`
+	Group   int      `bson:"group"`
+	Lessons LessonsF `bson:"lessons"`
 }
 
 type Shedule struct {
-	ID               primitive.ObjectID `bson:"_id,omitempty"`
-	Day              string             `bson:"day"`
-	Groupe           int                `bson:"group"`
-	Lessons          bson.M             `bson:"lessons"`
-	Messagebyteacher bson.M             `bson:"messagebyteacher"`
+	Day     string  `bson:"day"`
+	Group   int     `bson:"group"`
+	Lessons Lessons `bson:"lessons"`
 }
 
 type Connection struct {
@@ -124,11 +177,101 @@ func (connection Connection) GetSheduleEndpoint(response http.ResponseWriter, re
 	json.NewEncoder(response).Encode(shed)
 }
 
+func (connection Connection) GetMondayEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	var day []Monday
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := connection.Shedule.Find(ctx, bson.M{"day": "Понедельник"})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	if err = cursor.All(ctx, &day); err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(day)
+}
+
+func (connection Connection) GetTuesdayEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	var day []Tuesday
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := connection.Shedule.Find(ctx, bson.M{"day": "Вторник"})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	if err = cursor.All(ctx, &day); err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(day)
+}
+
+func (connection Connection) GetWednesdayEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	var day []Tuesday
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := connection.Shedule.Find(ctx, bson.M{"day": "Среда"})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	if err = cursor.All(ctx, &day); err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(day)
+}
+
+func (connection Connection) GetThursdayEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	var day []Tuesday
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := connection.Shedule.Find(ctx, bson.M{"day": "Четверг"})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	if err = cursor.All(ctx, &day); err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(day)
+}
+
+func (connection Connection) GetFridayEndpoint(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	var day []Friday
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := connection.Shedule.Find(ctx, bson.M{"day": "Пятница"})
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	if err = cursor.All(ctx, &day); err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(day)
+}
+
 func (connection Connection) GetAdminsEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	var admins []User
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	cursor, err := connection.Users.Find(ctx, bson.M{"roles": bson.A{"Админ", "Студент"}})
+	cursor, err := connection.Users.Find(ctx, bson.M{"role": "Админ"})
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
@@ -146,7 +289,7 @@ func (connection Connection) GetStudentsEndpoint(response http.ResponseWriter, r
 	response.Header().Set("content-type", "application/json")
 	var admins []User
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	cursor, err := connection.Users.Find(ctx, bson.M{"roles": bson.A{"Студент"}})
+	cursor, err := connection.Users.Find(ctx, bson.M{"role": "Студент"})
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
@@ -164,7 +307,7 @@ func (connection Connection) GetTeachersEndpoint(response http.ResponseWriter, r
 	response.Header().Set("content-type", "application/json")
 	var teachers []Teacher
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	cursor, err := connection.Users.Find(ctx, bson.M{"roles": bson.A{"Учитель"}})
+	cursor, err := connection.Users.Find(ctx, bson.M{"role": "Учитель"})
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
@@ -194,14 +337,15 @@ func (connection Connection) UpdateUserEndpoint(response http.ResponseWriter, re
 	json.NewEncoder(response).Encode(result)
 }
 
-func (connection Connection) UpdateSheduleEndpoint(response http.ResponseWriter, request *http.Request) {
+func (connection Connection) UpdateMessageEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	params := mux.Vars(request)
-	id, _ := primitive.ObjectIDFromHex(params["id"])
-	var day Shedule
-	json.NewDecoder(request.Body).Decode(&day)
+	day, _ := params["day"]
+	messageN, _ := params["lesson"]
+	message, _ := params["message"]
+	json.NewDecoder(request.Body).Decode(&message)
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	result, err := connection.Shedule.UpdateOne(ctx, bson.M{"_id": id}, bson.D{{"$set", day}})
+	result, err := connection.Shedule.UpdateOne(ctx, bson.M{"day": day}, bson.D{{"$set", bson.D{{messageN, message}}}})
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
@@ -241,15 +385,25 @@ func main() {
 	}
 
 	router := mux.NewRouter()
+
 	router.HandleFunc("/user", connection.CreateUserEndpoint).Methods("POST")
-	router.HandleFunc("/usert", connection.CreateTeacherEndpoint).Methods("POST")
+	router.HandleFunc("/teacher", connection.CreateTeacherEndpoint).Methods("POST")
+
 	router.HandleFunc("/users", connection.GetUsersEndpoint).Methods("GET")
 	router.HandleFunc("/teachers", connection.GetTeachersEndpoint).Methods("GET")
 	router.HandleFunc("/admins", connection.GetAdminsEndpoint).Methods("GET")
 	router.HandleFunc("/students", connection.GetStudentsEndpoint).Methods("GET")
 	router.HandleFunc("/shedule", connection.GetSheduleEndpoint).Methods("GET")
+	router.HandleFunc("/monday", connection.GetMondayEndpoint).Methods("GET")
+	router.HandleFunc("/tuesday", connection.GetTuesdayEndpoint).Methods("GET")
+	router.HandleFunc("/wednesday", connection.GetWednesdayEndpoint).Methods("GET")
+	router.HandleFunc("/thursday", connection.GetThursdayEndpoint).Methods("GET")
+	router.HandleFunc("/friday", connection.GetFridayEndpoint).Methods("GET")
+
 	router.HandleFunc("/user/{id}", connection.UpdateUserEndpoint).Methods("PUT")
-	router.HandleFunc("/shedule/{id}", connection.UpdateSheduleEndpoint).Methods("PUT")
+	router.HandleFunc("/shedule/{day}/{lesson}/{message}", connection.UpdateMessageEndpoint).Methods("PUT")
+
 	router.HandleFunc("/user/{id}", connection.DeleteUserEndpoint).Methods("DELETE")
-	http.ListenAndServe("localhost:8000", router)
+
+	http.ListenAndServe("localhost:2000", router)
 }
