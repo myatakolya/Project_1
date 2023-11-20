@@ -2,19 +2,17 @@ import { Telegraf, Scenes, session, Composer } from 'telegraf'
 import { message } from 'telegraf/filters'
 import 'dotenv/config'
 import axios from 'axios'
-import methods from 'methods';
 // import debug from './helpers.js'
 
 const bot = new Telegraf(process.env.TG_API_TOKEN);
 const pathToUsers = '/users'
-const pathToSchedule = '/shedule'
+const pathToSchedule = '/schedule'
 
 axios.defaults.baseURL = `${process.env.DB_URL}`
 
 let userFirstName;
 let userLastName;
 let userGitID;
-
 
 const startWizard = new Composer();
 startWizard.on('text', async ctx => {
@@ -56,9 +54,11 @@ bot.start(async ctx => {
 bot.command('toadmin' , ctx => {
   ctx.reply('Данная функция пока недоступна')
 })
-// bot.hears('Расписание на сегодня', async ctx => {
-//   await getSchedule(ctx)
-// })
+bot.hears(/Расписание на (.*)/, async (ctx) => {
+  let curDay = ctx.match[1];
+  console.log(curDay)
+  await getSchedule(ctx, curDay)
+})
 
 bot.command('showusers', async ctx => {
   console.log(getUserById('653ebb213c4c46bb0101cd7a'))
@@ -82,18 +82,31 @@ async function getUserById(userId) {
   }
 }
 
-// async function getSchedule(ctx) {
-//   try{
-//     await axios.get(
-//       pathToSchedule
-//     ).then(
-//       response => {
-//         ctx.reply(JSON.stringify(response.data, "", 2))
-//       }
-//     ).catch(err => {
-//         console.log(err)
-//     })
-//   }catch(err){
-//     console.log(err)
-//   }
-// }
+async function getSchedule(ctx, curDay = "Понедельник", userGroup = "231") {
+  try{
+    await axios({
+      method: 'get',
+      url: `${pathToSchedule}`
+    }).then(
+      async response => {
+        let result = await response.data.find( item => { return item.Day === curDay && item.Group === +userGroup });
+        if (result) {
+          await ctx.replyWithHTML(`
+<b>Первая пара:</b> ${result.Lessons.Lesson1.Subject} 
+<b>Преподаватель:</b> ${result.Lessons.Lesson1.Teacher} 
+<b>Тип:</b> ${result.Lessons.Lesson1.Type} 
+<b>Аудитория:</b> ${result.Lessons.Lesson1.Room} 
+<b>Время:</b> ${result.Lessons.Lesson1.Time} 
+          `)
+          console.log(result)
+        }else {
+          await ctx.reply("Такого дня недели не существует")
+        }
+      }
+    ).catch(err => {
+        console.log(err)
+    })
+  }catch(err){
+    console.log(err)
+  }
+}
