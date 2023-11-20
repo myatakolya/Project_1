@@ -13,10 +13,10 @@ import (
 )
 
 type Role struct {
-	Naming        string `bson:"naming"`
-	Sheduleaccess bool   `bson:"sheduleaccess"`
-	Fullaccess    bool   `bson:"fullaccess"`
-	Comments      bool   `bson:"comments"`
+	Naming   string `bson:"naming"`
+	Sched    bool   `bson:"sched"`
+	Full     bool   `bson:"full"`
+	Comments bool   `bson:"comments"`
 }
 
 type User struct {
@@ -51,52 +51,53 @@ type Lesson struct {
 }
 
 type Lessons struct {
-	Lesson1  Lesson `bson:"lesson1,omitempty"`
-	Message1 string `bson:"message1"`
-	Lesson2  Lesson `bson:"lesson2,omitempty"`
-	Message2 string `bson:"message2"`
-	Lesson3  Lesson `bson:"lesson3,omitempty"`
-	Message3 string `bson:"message3"`
-	Lesson4  Lesson `bson:"lesson4,omitempty"`
-	Message4 string `bson:"message4"`
+	Lesson1 Lesson `bson:"lesson1,omitempty"`
+	Lesson2 Lesson `bson:"lesson2,omitempty"`
+	Lesson3 Lesson `bson:"lesson3,omitempty"`
+	Lesson4 Lesson `bson:"lesson4,omitempty"`
 }
 
 type LessonsT struct {
-	Lesson1  Lesson `bson:"lesson1,omitempty"`
-	Message1 string `bson:"message1"`
-	Lesson2  Lesson `bson:"lesson2,omitempty"`
-	Message2 string `bson:"message2"`
-	Lesson3  Lesson `bson:"lesson3,omitempty"`
-	Message3 string `bson:"message3"`
+	Lesson1 Lesson `bson:"lesson1,omitempty"`
+	Lesson2 Lesson `bson:"lesson2,omitempty"`
+	Lesson3 Lesson `bson:"lesson3,omitempty"`
 }
 
 type LessonsF struct {
-	Lesson1  Lesson `bson:"lesson1,omitempty"`
-	Message1 string `bson:"message1"`
+	Lesson1 Lesson `bson:"lesson1,omitempty"`
 }
 
 type Monday struct {
-	Day     string  `bson:"day"`
-	Group   int     `bson:"group"`
-	Lessons Lessons `bson:"lessons"`
+	Day      string  `bson:"day"`
+	Group    int     `bson:"group"`
+	Lessons  Lessons `bson:"lessons"`
+	Message1 string  `bson:"message1"`
+	Message2 string  `bson:"message2"`
+	Message3 string  `bson:"message3"`
+	Message4 string  `bson:"message4"`
 }
 
 type Tuesday struct {
-	Day     string   `bson:"day"`
-	Group   int      `bson:"group"`
-	Lessons LessonsT `bson:"lessons"`
+	Day      string   `bson:"day"`
+	Group    int      `bson:"group"`
+	Lessons  LessonsT `bson:"lessons"`
+	Message1 string   `bson:"message1"`
+	Message2 string   `bson:"message2"`
+	Message3 string   `bson:"message3"`
 }
 
 type Friday struct {
-	Day     string   `bson:"day"`
-	Group   int      `bson:"group"`
-	Lessons LessonsF `bson:"lessons"`
+	Day      string   `bson:"day"`
+	Group    int      `bson:"group"`
+	Lessons  LessonsF `bson:"lessons"`
+	Message1 string   `bson:"message1"`
 }
 
 type Shedule struct {
-	Day     string  `bson:"day"`
-	Group   int     `bson:"group"`
-	Lessons Lessons `bson:"lessons"`
+	Day      string  `bson:"day"`
+	Group    int     `bson:"group"`
+	Lessons  Lessons `bson:"lessons"`
+	Message1 string  `bson:"message1"`
 }
 
 type Connection struct {
@@ -393,7 +394,7 @@ func main() {
 	router.HandleFunc("/teachers", connection.GetTeachersEndpoint).Methods("GET")
 	router.HandleFunc("/admins", connection.GetAdminsEndpoint).Methods("GET")
 	router.HandleFunc("/students", connection.GetStudentsEndpoint).Methods("GET")
-	router.HandleFunc("/shedule", connection.GetSheduleEndpoint).Methods("GET")
+	router.HandleFunc("/schedule", connection.GetSheduleEndpoint).Methods("GET")
 	router.HandleFunc("/monday", connection.GetMondayEndpoint).Methods("GET")
 	router.HandleFunc("/tuesday", connection.GetTuesdayEndpoint).Methods("GET")
 	router.HandleFunc("/wednesday", connection.GetWednesdayEndpoint).Methods("GET")
