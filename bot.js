@@ -2,6 +2,7 @@ import { Telegraf, Scenes, session, Composer } from 'telegraf'
 import { message } from 'telegraf/filters'
 import 'dotenv/config'
 import axios from 'axios'
+import User from './control-user.js'
 // import debug from './helpers.js'
 
 const bot = new Telegraf(process.env.TG_API_TOKEN);
@@ -51,9 +52,16 @@ bot.start(async ctx => {
   await ctx.reply('Добро пожаловать, меня зовут Расписалово. Я - бот, который управляет расписанием. Перед началом работы необходимо аутентифицироваться')
   await ctx.scene.enter('userName')
 })
+
 bot.command('toadmin' , ctx => {
   ctx.reply('Данная функция пока недоступна')
 })
+
+bot.command('whoami', ctx => {
+  const user = getUserName();
+  ctx.reply(user)
+})
+
 bot.hears(/Расписание на (.*)/, async (ctx) => {
   let curDay = ctx.match[1];
   console.log(curDay)
@@ -107,6 +115,14 @@ async function getSchedule(ctx, curDay = "Понедельник", userGroup = "
         console.log(err)
     })
   }catch(err){
+    console.log(err)
+  }
+}
+
+async function getUserName() {
+  try {
+    return userFirstName + userLastName
+  } catch ( err ) {
     console.log(err)
   }
 }
