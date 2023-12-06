@@ -1,128 +1,65 @@
-import { Telegraf, Scenes, session, Composer } from 'telegraf'
-import { message } from 'telegraf/filters'
-import 'dotenv/config'
+import { Telegraf, Scenes, session, Markup } from 'telegraf'
 import axios from 'axios'
-import User from './control-user.js'
-// import debug from './helpers.js'
+import 'dotenv/config'
+import * as schedule from './schedule.js'
+// import scheduleScene from './scenes/scheduleScene.js'
 
-const bot = new Telegraf(process.env.TG_API_TOKEN);
-const pathToUsers = '/users'
-const pathToSchedule = '/schedule'
+const bot = new Telegraf(process.env.TG_BOT_TOKEN);
+axios.defaults.baseURL = `${process.env.DB_URL}`;
 
-axios.defaults.baseURL = `${process.env.DB_URL}`
+// const stage = new Scenes.Stage([scheduleScene])
+// bot.use(session())
+// bot.use(stage.middleware())
 
-let userFirstName;
-let userLastName;
-let userGitID;
-
-const startWizard = new Composer();
-startWizard.on('text', async ctx => {
-  await ctx.reply('Введите ваше имя')
-  return ctx.wizard.next()
-})
-
-const firstName = new Composer();
-firstName.on('text', async ctx => {
-  if(ctx.message.text) {
-    userFirstName = ctx.message.text
-    await ctx.reply('Введите вашу фамилию')
-    return ctx.wizard.next()
-  } else { 
-    await ctx.reenter()
-  }
-})
-
-const lastName = new Composer();
-lastName.on('text', async ctx => {
-  if (ctx.message.text) {
-    userLastName = ctx.message.text
-    await ctx.reply(`Приветствую, ${userFirstName} ${userLastName}`)
-    await ctx.scene.leave()
-  } else {
-    await ctx.reenter()
-  }
-})
-
-const getUserScene = new Scenes.WizardScene('userName', startWizard, firstName, lastName);
-bot.use(session())
-const stage = new Scenes.Stage([getUserScene])
-bot.use(stage.middleware())
-
+// Начало
 bot.start(async ctx => {
-  await ctx.reply('Добро пожаловать, меня зовут Расписалово. Я - бот, который управляет расписанием. Перед началом работы необходимо аутентифицироваться')
-  await ctx.scene.enter('userName')
+  await ctx.reply('Добро пожаловать, для начала работы, вам необходимо авторизироваться. Введите команду /auth')
 })
 
-bot.command('toadmin' , ctx => {
-  ctx.reply('Данная функция пока недоступна')
+// Начало авторизации
+bot.command('auth', async ctx => {
+  await ctx.reply("Пока что я нахожусь в процессе разработки, поэтому каждый пользователь \"авторизирован\"")
 })
 
-bot.command('whoami', ctx => {
-  const user = getUserName();
-  ctx.reply(user)
+// При нажатии на кнопку Назад
+bot.hears('Назад', async ctx => [
+  await ctx.reply('Выберите, что вы хотите сделать...', Markup.keyboard(
+    [
+      ['Посмотреть расписание', 'Найти преподавателя'],
+      ['Узнать, где следующая пара', 'Узнать, когда БУЭКЗАМЕН']
+    ]
+  ))
+])
+
+
+// Посмотреть расписание
+bot.hears('Посмотреть расписание', async ctx => {
+  await ctx.reply('Что именно интересует?', Markup.keyboard(
+    [
+      ['Расписание на завтра', 'Расписание на сегодня'],
+      ['Расписание на ...', 'Назад']
+    ]
+  ))
 })
 
-bot.hears(/Расписание на (.*)/, async (ctx) => {
-  let curDay = ctx.match[1];
-  console.log(curDay)
-  await getSchedule(ctx, curDay)
+// Выбор расписания
+bot.hears(/Расписание на (.+)/, async ctx => {
+  if(ctx.match[1] === '...') {
+    await ctx.reply('Выбери день недели', Markup.keyboard(
+      [
+        ['Расписание на Понедельник', 'Расписание на Вторник'],
+        ['Расписание на Среда', 'Расписание на Четверг'],
+        ['Расписание на Пятница', 'Назад']
+      ]
+    ))
+  } else {
+    await schedule.getSchedule(ctx, ctx.match[1])
+  }
 })
 
-bot.command('showusers', async ctx => {
-  console.log(getUserById('653ebb213c4c46bb0101cd7a'))
+// Переход к панели администрирования
+bot.command('toadmin', async ctx => {
+  await ctx.reply('Временно недоступно...')
 })
+
 bot.launch()
-
-async function getUserById(userId) {
-  try {
-    await axios({
-      method: 'get',
-      url: `${pathToUsers}`
-    }).then(response => {
-      console.log(response.data.find( item => {
-        return item.ID === `${userId}`;
-      }))
-    }).catch(err => {
-      console.log(err)
-    });
-  } catch( err ) {
-    console.log(err)
-  }
-}
-
-async function getSchedule(ctx, curDay = "Понедельник", userGroup = "231") {
-  try{
-    await axios({
-      method: 'get',
-      url: `${pathToSchedule}`
-    }).then(
-      async response => {
-        let result = await response.data.find( item => { return item.Day === curDay && item.Group === +userGroup });
-        if (result) {
-          await ctx.replyWithHTML(`
-<b>Первая пара:</b> ${result.Lessons.Lesson1.Subject} 
-<b>Преподаватель:</b> ${result.Lessons.Lesson1.Teacher} 
-<b>Тип:</b> ${result.Lessons.Lesson1.Type} 
-<b>Аудитория:</b> ${result.Lessons.Lesson1.Room} 
-<b>Время:</b> ${result.Lessons.Lesson1.Time} 
-          `)
-          console.log(result)
-        }else {
-          await ctx.reply("Такого дня недели не существует")
-        }
-      }
-    ).catch(err => {
-        console.log(err)
-    })
-  }catch(err){
-    console.log(err)
-  }
-}
-
-async function getUserName() {
-  try {
-    return userFirstName + userLastName
-  } catch ( err ) {
-    console.log(err)
-  }
-}
