@@ -1,5 +1,4 @@
 import axios from "axios";
-const pathToUsers = '/users'
 const pathToSchedule = '/schedule'
 
 const days = [
@@ -38,6 +37,7 @@ export async function getSchedule(ctx, userDay = "Понедельник", userG
 
           let lessonInfo = lessons.map(lessonInfo => {
             let message;
+
             if(lessonInfo.Subject) {
               message =`<b>Пара</b>: ${lessonInfo.Subject}\n` + 
               `<b>Преподаватель</b>: ${lessonInfo.Teacher}\n` + 
@@ -45,6 +45,7 @@ export async function getSchedule(ctx, userDay = "Понедельник", userG
               `<b>Тип</b>: ${lessonInfo.Type}\n` +
               `<b>Время</b>: ${lessonInfo.Time}` 
             }
+            
             return message
           });
 
@@ -70,7 +71,7 @@ export async function getNextLesson(ctx, curDay = days[getCurDay - 1], userGroup
       url: `${pathToSchedule}`
     }).then(async response => {
       let result = await response.data.find( item => {
-        return item.Day === curDay && item.Group === userGroup
+        return item.Day.toLowerCase() === curDay.toLowerCase() && item.Group === userGroup
       })
       let lessons = [];
 
@@ -91,24 +92,72 @@ export async function getNextLesson(ctx, curDay = days[getCurDay - 1], userGroup
           return message
         })
 
-        if(getCurTime >= '8:00' && getCurTime < '9:50') {
-          await ctx.replyWithHTML(lessonInfo[0])
-        } else if (getCurTime >= '9:50' && getCurTime < '11:30') {
-          await ctx.replyWithHTML(lessonInfo[1])
-        } else if (getCurTime >= '11:30' && getCurTime < '13:20') {
-          await ctx.replyWithHTML(lessonInfo[2])
-        } else if (getCurTime >= '13:20' && getCurTime < '15:00') {
-          await ctx.replyWithHTML(lessonInfo[3])
-        } else if (getCurTime >= '15:00' && getCurTime < '16:40') {
-          await ctx.replyWithHTML(lessonInfo[4])
-        } else if (getCurTime >= '16:40' && getCurTime < '18:20') {
-          await ctx.replyWithHTML(lessonInfo[5])
-        } else if (getCurTime >= '18:20' && getCurTime < '20:00') {
-          await ctx.replyWithHTML(lessonInfo[6])
-        } else if (getCurTime >= '20:00' && getCurTime < '21:30') {
-          await ctx.replyWithHTML(lessonInfo[7])
+        if(curDay !== "Суббота" || curDay !== "Воскресенье"){
+          if(getCurTime >= '6:00' && getCurTime < '8:00') {
+            if(lessonInfo[0]) {
+              await ctx.replyWithHTML(lessonInfo[0]) 
+            } else if (!lessonInfo[0] && lessonInfo[1]) {
+              await ctx.reply("Перерыв") 
+            } else {
+              await ctx.reply("Пары кончились")
+            }
+          } else if (getCurTime >= '8:00' && getCurTime < '9:50') {
+            if(lessonInfo[1]) {
+              await ctx.replyWithHTML(lessonInfo[1]) 
+            } else if (!lessonInfo[1] && lessonInfo[2]) {
+              await ctx.reply("Перерыв") 
+            } else {
+              await ctx.reply("Пары кончились")
+            }
+          } else if (getCurTime >= '9:50' && getCurTime < '11:30') {
+            if(lessonInfo[2]) {
+              await ctx.replyWithHTML(lessonInfo[2]) 
+            } else if (!lessonInfo[2] && lessonInfo[3]) {
+              await ctx.reply("Перерыв") 
+            } else {
+              await ctx.reply("Пары кончились")
+            }
+          } else if (getCurTime >= '11:30' && getCurTime < '13:20') {
+            if(lessonInfo[3]) {
+              await ctx.replyWithHTML(lessonInfo[3]) 
+            } else if (!lessonInfo[3] && lessonInfo[4]) {
+              await ctx.reply("Перерыв") 
+            } else {
+              await ctx.reply("Пары кончились")
+            }
+          } else if (getCurTime >= '13:20' && getCurTime < '15:00') {
+            if(lessonInfo[4]) {
+              await ctx.replyWithHTML(lessonInfo[4]) 
+            } else if (!lessonInfo[4] && lessonInfo[5]) {
+              await ctx.reply("Перерыв") 
+            } else {
+              await ctx.reply("Пары кончились")
+            }
+          } else if (getCurTime >= '15:00' && getCurTime < '16:40') {
+            if(lessonInfo[5]) {
+              await ctx.replyWithHTML(lessonInfo[5]) 
+            } else if (!lessonInfo[5] && lessonInfo[6]) {
+              await ctx.reply("Перерыв") 
+            } else {
+              await ctx.reply("Пары кончились")
+            }
+          } else if (getCurTime >= '16:40' && getCurTime < '18:20') {
+            if(lessonInfo[6]) {
+              await ctx.replyWithHTML(lessonInfo[6]) 
+            } else if (!lessonInfo[6] && lessonInfo[7]) {
+              await ctx.reply("Перерыв") 
+            } else {
+              await ctx.reply("Пары кончились")
+            }
+          } else if (getCurTime >= '18:20' && getCurTime < '20:00') {
+            if(lessonInfo[7]) {
+              await ctx.replyWithHTML(lessonInfo[7]) 
+            }
+          } else {
+            await ctx.reply("Пары кончились")
+          }
         } else {
-          await ctx.reply("Пары кончились")
+          ctx.reply("Это выходной")
         }
       } else {
         ctx.reply("Ошибка")
