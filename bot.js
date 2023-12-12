@@ -20,10 +20,11 @@ bot.start(async ctx => {
 
 // Начало авторизации
 bot.command('auth', async ctx => {
+  // Проверка авторизации
   await userControl.checkAuth(
     ctx,
     async () => {
-      await ctx.reply('Вы уже авторизованы')
+      await ctx.reply('Вы уже авторизованы, введите команду /join')
     },
     async () => {
       await ctx.scene.enter('authWizard')
@@ -31,8 +32,9 @@ bot.command('auth', async ctx => {
   )
 })
 
-// Подтверждение существования пользователя
+// Начало пользования ботом
 bot.command('join', async ctx => {
+  // Проверка авторизации
   await userControl.checkAuth(
     ctx,
     async () => {
@@ -84,10 +86,8 @@ bot.hears('Назад', async ctx => {
         Markup.keyboard(
           [
             // ['/toadmin']
-            [
-              ['Посмотреть расписание', 'Найти преподавателя'],
-              ['Узнать, где следующая пара', 'Узнать, когда БУЭКЗАМЕН']
-            ]
+            ['Посмотреть расписание', 'Найти преподавателя'],
+            ['Узнать, где следующая пара', 'Узнать, когда БУЭКЗАМЕН']
           ]
         )
       )
@@ -123,7 +123,8 @@ bot.hears('Узнать, где следующая пара', async ctx => {
 
 // Посмотреть расписание
 bot.hears('Посмотреть расписание', async ctx => {
-  await ctx.reply('Что именно интересует?', Markup.keyboard(
+  await ctx.reply('Что именно интересует?', 
+  Markup.keyboard(
     [
       ['Расписание на завтра', 'Расписание на сегодня'],
       ['Расписание на ...', 'Назад']

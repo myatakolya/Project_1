@@ -14,7 +14,18 @@ const d = new Date();
 const getCurDay = d.getDay();
 const getHours = d.getHours();
 const getMinutes = d.getMinutes();
-const getCurTime = `${getHours}:${getMinutes}`;
+// const getCurTime = `${getHours}:${getMinutes}`;
+const timeList = [
+  {start: {h: 8,m: 0}, end: {h: 9, m: 50}},
+  {start: {h: 9,m: 50}, end: {h: 11, m: 30}},
+  {start: {h: 11,m: 30}, end: {h: 13, m: 20}},
+  {start: {h: 13,m: 20}, end: {h: 15, m: 0}},
+  {start: {h: 15,m: 0}, end: {h: 16, m: 30}},
+  {start: {h: 16,m: 30}, end: {h: 18, m: 20}},
+  {start: {h: 18,m: 20}, end: {h: 20, m: 0}},
+  {start: {h: 20,m: 0}, end: {h: 21, m: 30}},
+];
+const curTime = getHours * 60 + getMinutes;
 
 export async function getSchedule(ctx, userDay = "Понедельник", userGroup = 231) {
   try{
@@ -35,15 +46,15 @@ export async function getSchedule(ctx, userDay = "Понедельник", userG
             lessons.push(result.Lessons[i]) 
           }
 
-          let lessonInfo = lessons.map(lessonInfo => {
+          let lessonInfo = lessons.map(item => {
             let message;
 
-            if(lessonInfo.Subject) {
-              message =`<b>Пара</b>: ${lessonInfo.Subject}\n` + 
-              `<b>Преподаватель</b>: ${lessonInfo.Teacher}\n` + 
-              `<b>Аудитория</b>: ${lessonInfo.Room}\n` + 
-              `<b>Тип</b>: ${lessonInfo.Type}\n` +
-              `<b>Время</b>: ${lessonInfo.Time}` 
+            if(item.Subject) {
+              message =`<b>Пара</b>: ${item.Subject}\n` + 
+              `<b>Преподаватель</b>: ${item.Teacher}\n` + 
+              `<b>Аудитория</b>: ${item.Room}\n` + 
+              `<b>Тип</b>: ${item.Type}\n` +
+              `<b>Время</b>: ${item.Time}` 
             }
             
             return message
@@ -80,79 +91,39 @@ export async function getNextLesson(ctx, curDay = days[getCurDay - 1], userGroup
           lessons.push(result.Lessons[i])
         }
 
-        let lessonInfo = lessons.map(lessonInfo => {
+        let lessonInfo = lessons.map(item => {
           let message;
-          if(lessonInfo.Subject) {
-            message = `<b>Пара</b>: ${lessonInfo.Subject}\n` + 
-            `<b>Преподаватель</b>: ${lessonInfo.Teacher}\n` + 
-            `<b>Аудитория</b>: ${lessonInfo.Room}\n` + 
-            `<b>Тип</b>: ${lessonInfo.Type}\n` +
-            `<b>Время</b>: ${lessonInfo.Time}` 
+
+          if(item.Subject) {
+            message = `<b>Пара</b>: ${item.Subject}\n` + 
+            `<b>Преподаватель</b>: ${item.Teacher}\n` + 
+            `<b>Аудитория</b>: ${item.Room}\n` + 
+            `<b>Тип</b>: ${item.Type}\n` +
+            `<b>Время</b>: ${item.Time}` 
           }
+
           return message
         })
 
+        let curLesson;
+
+        for(let i = 0; i <= timeList.length; i++){
+          const entry = timeList[i];
+
+          const mStart = entry.start.h * 60 + entry.start.m;
+          const mEnd = entry.end.h * 60+ entry.end.m;
+
+          if(curTime >= mStart && curTime <= mEnd) {
+            curLesson = i + 1;
+            break;
+          }
+        }
+
         if(curDay !== "Суббота" || curDay !== "Воскресенье"){
-          if(getCurTime >= '6:00' && getCurTime < '8:00') {
-            if(lessonInfo[0]) {
-              await ctx.replyWithHTML(lessonInfo[0]) 
-            } else if (!lessonInfo[0] && lessonInfo[1]) {
-              await ctx.reply("Перерыв") 
-            } else {
-              await ctx.reply("Пары кончились")
-            }
-          } else if (getCurTime >= '8:00' && getCurTime < '9:50') {
-            if(lessonInfo[1]) {
-              await ctx.replyWithHTML(lessonInfo[1]) 
-            } else if (!lessonInfo[1] && lessonInfo[2]) {
-              await ctx.reply("Перерыв") 
-            } else {
-              await ctx.reply("Пары кончились")
-            }
-          } else if (getCurTime >= '9:50' && getCurTime < '11:30') {
-            if(lessonInfo[2]) {
-              await ctx.replyWithHTML(lessonInfo[2]) 
-            } else if (!lessonInfo[2] && lessonInfo[3]) {
-              await ctx.reply("Перерыв") 
-            } else {
-              await ctx.reply("Пары кончились")
-            }
-          } else if (getCurTime >= '11:30' && getCurTime < '13:20') {
-            if(lessonInfo[3]) {
-              await ctx.replyWithHTML(lessonInfo[3]) 
-            } else if (!lessonInfo[3] && lessonInfo[4]) {
-              await ctx.reply("Перерыв") 
-            } else {
-              await ctx.reply("Пары кончились")
-            }
-          } else if (getCurTime >= '13:20' && getCurTime < '15:00') {
-            if(lessonInfo[4]) {
-              await ctx.replyWithHTML(lessonInfo[4]) 
-            } else if (!lessonInfo[4] && lessonInfo[5]) {
-              await ctx.reply("Перерыв") 
-            } else {
-              await ctx.reply("Пары кончились")
-            }
-          } else if (getCurTime >= '15:00' && getCurTime < '16:40') {
-            if(lessonInfo[5]) {
-              await ctx.replyWithHTML(lessonInfo[5]) 
-            } else if (!lessonInfo[5] && lessonInfo[6]) {
-              await ctx.reply("Перерыв") 
-            } else {
-              await ctx.reply("Пары кончились")
-            }
-          } else if (getCurTime >= '16:40' && getCurTime < '18:20') {
-            if(lessonInfo[6]) {
-              await ctx.replyWithHTML(lessonInfo[6]) 
-            } else if (!lessonInfo[6] && lessonInfo[7]) {
-              await ctx.reply("Перерыв") 
-            } else {
-              await ctx.reply("Пары кончились")
-            }
-          } else if (getCurTime >= '18:20' && getCurTime < '20:00') {
-            if(lessonInfo[7]) {
-              await ctx.replyWithHTML(lessonInfo[7]) 
-            }
+          if(lessonInfo[curLesson]){
+            await ctx.replyWithHTML(lessonInfo[curLesson])
+          } else if (!lessonInfo[curLesson] && lessonInfo[curLesson + 1]) {
+            await ctx.reply("Окно")
           } else {
             await ctx.reply("Пары кончились")
           }

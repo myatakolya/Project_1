@@ -56,7 +56,7 @@ group.on('text', async ctx => {
       "Content-type": "application/json; charset=UTF-8"
     }
   })
-  await ctx.reply('Регистрация завершена, введите команду /join')
+  await ctx.reply('Регистрация завершена успешно, введите команду /join')
   await ctx.scene.leave()
 })
 const authScene = new Scenes.WizardScene('authWizard', entering, git, firstName, lastName, group)

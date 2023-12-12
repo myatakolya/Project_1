@@ -15,7 +15,7 @@ export async function checkAuth(ctx, ifTrue, ifElse) {
     if(result) {
       await ifTrue()
     } else {
-      await ifElse(ifElse ?? ctx.reply("Сначала зарегистрируйся")) 
+      await ifElse(ifElse || ctx.reply("Сначала зарегистрируйся")) 
     }
   }).catch(err => {
     console.error(err)
