@@ -111,7 +111,7 @@ export async function getNextLesson(ctx, curDay = days[getCurDay - 1], userGroup
           const entry = timeList[i];
 
           const mStart = entry.start.h * 60 + entry.start.m;
-          const mEnd = entry.end.h * 60+ entry.end.m;
+          const mEnd = entry.end.h * 60 + entry.end.m;
 
           if(curTime >= mStart && curTime <= mEnd) {
             curLesson = i + 1;
