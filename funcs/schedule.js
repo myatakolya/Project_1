@@ -38,12 +38,13 @@ export async function getSchedule(ctx, userDay = "Понедельник", userG
       await user.getUserGroup(ctx).then( response => {
         userGroup = response;
       })
+      // console.log(userGroup)
 
-      if(userDay.toLowerCase() === 'сегодня') userDay = days.at(getCurDay - 1)
-      else if (userDay.toLowerCase() === 'завтра') userDay = days.at(getCurDay)
+      if(userDay.toLowerCase() === 'сегодня') userDay = days[getCurDay - 1]
+      else if (userDay.toLowerCase() === 'завтра') userDay = days[getCurDay]
 
       const result = await response.data.find( item => {
-        return item.Day?.toLowerCase() === userDay?.toLowerCase() && item.Group === userGroup 
+        return item.Day.toLowerCase() === userDay.toLowerCase() && item.Group === userGroup 
       });
       let lessons = [];
       
