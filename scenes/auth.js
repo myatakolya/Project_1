@@ -8,6 +8,8 @@ let userGit;
 let userFirstName;
 let userLastName;
 let userGroup;
+let userSubgroup;
+let defaultUserRole = "Ученик";
 
 const entering = new Composer();
 entering.on('text', async ctx => {
@@ -32,13 +34,20 @@ firstName.on('text', async ctx => {
 const lastName = new Composer();
 lastName.on('text', async ctx => {
   userLastName = ctx.message.text;
-  await ctx.reply('Введите вашу группу(Цифрами, без подгруппы)')
+  await ctx.reply('Введите вашу группу \nПример: ИВТ-б-о-231 ( Без подгруппы )')
   return ctx.wizard.next()
 })
 
 const group = new Composer();
 group.on('text', async ctx => {
-  userGroup = +ctx.message.text;
+  userGroup = ctx.message.text;
+  await ctx.reply("Введите вашу подгруппу ( Одной цифрой )")
+  return ctx.wizard.next()
+})
+
+const subgroup = new Composer();
+subgroup.on('text', async ctx => {
+  userSubgroup = ctx.message.text;
   await ctx.reply('Почти всё готово, добавляю ваши данные в базу')
   await axios({
     method: 'POST',
@@ -49,8 +58,9 @@ group.on('text', async ctx => {
       Name: userFirstName,
       Surname: userLastName,
       Username: ctx.message.from.username,
-      Groupe: +userGroup,
-      Role: 'Ученик'
+      Group: userGroup,
+      Role: defaultUserRole,
+      Subgroup: `${userSubgroup}`
     },
     headers: {
       "Content-type": "application/json; charset=UTF-8"
@@ -59,6 +69,6 @@ group.on('text', async ctx => {
   await ctx.reply('Регистрация завершена успешно, введите команду /join')
   await ctx.scene.leave()
 })
-const authScene = new Scenes.WizardScene('authWizard', entering, git, firstName, lastName, group)
+const authScene = new Scenes.WizardScene('authWizard', entering, git, firstName, lastName, group, subgroup)
 
 export default authScene
